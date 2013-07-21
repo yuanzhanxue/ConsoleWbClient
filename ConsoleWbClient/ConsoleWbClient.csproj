@@ -5,12 +5,13 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{B0021E26-E771-4C4D-A7C8-0DD8EF9C2BAB}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ConsoleWbClient</RootNamespace>
     <AssemblyName>ConsoleWbClient</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -21,6 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -30,14 +32,23 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="log4net">
+      <HintPath>..\external-lib\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="NetDimension.Weibo">
       <HintPath>..\external-lib\NetDimension.Weibo.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -45,24 +56,41 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AccountUser.cs" />
+    <Compile Include="Domain\AccountUser.cs" />
     <Compile Include="CmdExcutor\AbstractMachineCmd.cs" />
     <Compile Include="CmdExcutor\CmdDownloadFile.cs" />
     <Compile Include="CmdExcutor\CmdFactory.cs" />
     <Compile Include="CmdExcutor\CmdShutdown.cs" />
     <Compile Include="CmdExcutor\CmdTakePhoto.cs" />
     <Compile Include="CmdExcutor\CmdUnavailable.cs" />
-    <Compile Include="Login.cs" />
+    <Compile Include="Domain\Login.cs" />
+    <Compile Include="Domain\LoopTask.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UI\WeiboCtrlClient.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\WeiboCtrlClient.Designer.cs">
+      <DependentUpon>WeiboCtrlClient.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Utilities\Log.cs" />
+    <Compile Include="Utilities\LogItem.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="log4net.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="UI\WeiboCtrlClient.resx">
+      <DependentUpon>WeiboCtrlClient.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy /b "$(ProjectDir)\log4net.config" $(TargetDir)</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
