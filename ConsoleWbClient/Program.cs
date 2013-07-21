@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NetDimension.Json;
 using ConsoleWbClient.CmdExcutor;
+using NetDimension.Weibo.Interface.Entity;
 
 namespace ConsoleWbClient
 {
@@ -29,7 +30,7 @@ namespace ConsoleWbClient
                 {
                     Console.WriteLine("AccountUser.SinceId:" + AccountUser.SinceId);
                     var metions = sina.API.Entity.Statuses.Mentions(
-                    	sinceID: AccountUser.SinceId
+                        sinceID: AccountUser.SinceId
                         , count: mentionCount
                         , filterByAuthor: 1
                         , filterBySource: 0
@@ -37,22 +38,28 @@ namespace ConsoleWbClient
 
                     foreach (var item in metions.Statuses)
                     {
-						if(AccountUser.ScreenNames.Contains(item.User.ScreenName))
-						{
-							CmdFactory factory = new CmdFactory(item.Text);
-							string retStr = string.Empty;
-							if(factory.GetCommander().ExecuteCmd(out retStr))
-							{
-								sina.API.Entity.Comments.Create(item.ID,retStr);
-							}
-						}
+                        if (AccountUser.ScreenNames.Contains(item.User.ScreenName))
+                        {
+                            CmdFactory factory = new CmdFactory(item.Text);
+                            AbstractMachineCmd cmder = factory.GetCommander();
+                            CommentInterface comments = sina.API.Entity.Comments;
+                            comments.Create(item.ID, cmder.PreExcute());
+                            AsyncComment(comments, cmder, item.ID);
+                        }
 
-						UpdateSinceId(item.ID);
+                        UpdateSinceId(item.ID);
                     }
                 }
 
                 System.Threading.Thread.Sleep(wait);
             }
+        }
+
+        private static async void AsyncComment(CommentInterface comments, AbstractMachineCmd cmder, string idWeibo)
+        {
+            string comment = await cmder.ExecuteCmd();
+
+            if (comment != string.Empty) comments.Create(idWeibo, comment);
         }
 
         private static void UpdateSinceId(string id = "0")

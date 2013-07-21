@@ -10,45 +10,47 @@ using System;
 
 namespace ConsoleWbClient.CmdExcutor
 {
-	/// <summary>
-	/// Description of CmdFactory.
-	/// </summary>
-	public class CmdFactory
-	{
-		private string StrCmd{ get; set; }
-		public CmdFactory(string content)
-		{
-			StrCmd = ParseContent(content.Trim());
-		}
-		
-		private string ParseContent(string con)
-		{
-			if(con.StartsWith("@") && con.Contains(" "))
-			{
-				return ParseContent(con.Substring(con.IndexOf(" ") + 1));
-			}
-			else
-			{
-				return con;
-			}
-		}
-		
-		public AbstractMachineCmd GetCommander(){
-			if(StrCmd.StartsWith("关机")){
-				return new CmdShutdown(StrCmd);
-			}
-			else if(StrCmd.StartsWith("下载"))
-			{
-				return new CmdDownloadFile(StrCmd);
-			}
-			else if(StrCmd.StartsWith("拍张照") || StrCmd.StartsWith("拍照"))
-			{
-				return new CmdTakePhoto(StrCmd);
-			}
-			else
-			{
-				return new CmdUnavailable(StrCmd);
-			}
-		}
-	}
+    /// <summary>
+    /// Description of CmdFactory.
+    /// </summary>
+    public class CmdFactory
+    {
+        private string StrCmd { get; set; }
+        public CmdFactory(string content)
+        {
+            StrCmd = ParseContent(content.Trim());
+        }
+
+        private string ParseContent(string con)
+        {
+            if (con.StartsWith("@") && con.Contains(" "))
+            {
+                return ParseContent(con.Substring(con.IndexOf(" ") + 1));
+            }
+            else
+            {
+                return con;
+            }
+        }
+
+        public AbstractMachineCmd GetCommander()
+        {
+            if (StrCmd.StartsWith("关机"))
+            {
+                return new CmdShutdown(StrCmd);
+            }
+            else if (StrCmd.StartsWith("下载"))
+            {
+                return new CmdDownloadFile(StrCmd);
+            }
+            else if (StrCmd.StartsWith("拍张照") || StrCmd.StartsWith("拍照"))
+            {
+                return new CmdTakePhoto(StrCmd);
+            }
+            else
+            {
+                return new CmdUnavailable(StrCmd);
+            }
+        }
+    }
 }
