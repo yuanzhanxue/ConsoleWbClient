@@ -4,10 +4,10 @@
  * 日期: 7/19/2013
  * 时间: 2:00 PM
  * 
- * 要改变这种模板请点击 工具|选项|代码编写|编辑标准头文件
  */
 using System;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ConsoleWbClient.CmdExcutor
@@ -19,16 +19,14 @@ namespace ConsoleWbClient.CmdExcutor
     {
         public static readonly string POWER_OFF = "正在强行关机，请稍候！";
 
-        public CmdShutdown(string content) : base(content) { }
+        protected override string ThreadTag { get { return "CmdShutdown"; } }
 
-        public override string PreExcute()
-        {
-            return POWER_OFF;
-        }
+        public CmdShutdown(string content, bool isContinue, ManualResetEvent exitSignal) : base(content, isContinue, exitSignal) { }
 
-        public override async Task<string> ExecuteCmd()
+        public override void ExecuteMethod()
         {
-            return await Task.Run(() => Cmd("shutdown -s"));
+        	iMessage.SendComments(WbId, POWER_OFF, false);
+            Cmd("shutdown -s");
         }
 
         /// <summary>

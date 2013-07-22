@@ -27,7 +27,7 @@ namespace ConsoleWbClient.Domain
     			Oauth = new OAuth(APP_KEY, APP_SECRET, CALLBACK_ADDRESS);
     		}
     		
-    		bool result = Oauth.ClientLogin(AccountUser.AccountName, AccountUser.Password);
+    		bool result = Oauth.ClientLogin(SystemParamSet.AccountName, SystemParamSet.Password);
     		if(result)
     		{
     			accessToken = Oauth.AccessToken;

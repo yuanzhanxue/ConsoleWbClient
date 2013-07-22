@@ -1,16 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NetDimension.Json;
-using ConsoleWbClient.CmdExcutor;
-using NetDimension.Weibo.Interface.Entity;
-using ConsoleWbClient.Domain;
-using System.Windows.Forms;
 using System.Threading;
+using System.Windows.Forms;
 using ConsoleWbClient.UI;
 
 namespace ConsoleWbClient
@@ -45,7 +35,7 @@ namespace ConsoleWbClient
 
         private static void HandleUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            Utilities.Log.F("Weibo服务异常退出", e.ExceptionObject as Exception);
+            Utilities.Log.F("新浪微博服务异常退出", e.ExceptionObject as Exception);
             Environment.Exit(-1);
         }
     }

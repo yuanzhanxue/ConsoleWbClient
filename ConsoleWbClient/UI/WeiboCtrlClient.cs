@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Configuration;
-using System.Data;
 using System.Drawing;
-using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using ConsoleWbClient.Domain;
@@ -17,6 +12,11 @@ namespace ConsoleWbClient.UI
         private delegate void DelegateWriteResult(string text, int s);
 
         private DateTime mStratTime { get; set; }
+        
+        /// <summary>
+        /// 线程上下文
+        /// </summary>
+        private AbsThreadContext threadContext = null;
 
         public WeiboCtrlClient()
         {
@@ -29,8 +29,27 @@ namespace ConsoleWbClient.UI
             Log.LogHandler += new LogWriteEventHandler(OnLogWriting);
             mStratTime = System.DateTime.Now;
             this.tbProcStart.Text = mStratTime.ToString("yyyy-MM-dd HH:mm:ss");
-            Log.I("Weibo后台服务启动！");
-            LoopTask.Instance.Start();
+            Log.I("新浪微博后台服务启动！");
+            
+            Init();
+            StartBusThread();
+        }
+        
+        private void Init()
+        {
+            try
+            {
+                threadContext = ThreadContext.CreateInstance();
+            }
+            catch (Exception ex)
+            {
+            	Log.E(ex.ToString());
+            }
+        }
+        
+        private void StartBusThread()
+        {
+        	threadContext.Start();
         }
 
         #region 窗体事件响应
@@ -111,7 +130,7 @@ namespace ConsoleWbClient.UI
         {
             if (MessageBox.Show("你确定要退出监控吗?", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
-                LoopTask.Instance.Stop();
+            	threadContext.Abort();
                 Log.I("关闭监控程序! 总共运行时间：" + this.tbProcPerform.Text);
                 this.notifyIcon.Visible = false;
                 Environment.Exit(-1);

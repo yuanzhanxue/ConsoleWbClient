@@ -4,9 +4,9 @@
  * 日期: 7/19/2013
  * 时间: 2:29 PM
  * 
- * 要改变这种模板请点击 工具|选项|代码编写|编辑标准头文件
  */
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ConsoleWbClient.CmdExcutor
@@ -17,19 +17,17 @@ namespace ConsoleWbClient.CmdExcutor
     public class CmdUnavailable : AbstractMachineCmd
     {
         public static readonly string CANNOT_EXECUTE = "奴婢做不到啊！";
-        public CmdUnavailable(string content)
-            : base(content)
+
+        protected override string ThreadTag { get { return "CmdUnavailable"; } }
+
+        public CmdUnavailable(string content, bool isContinue, ManualResetEvent exitSignal)
+            : base(content, isContinue, exitSignal)
         {
         }
 
-        public override string PreExcute()
+        public override void ExecuteMethod()
         {
-            return CANNOT_EXECUTE;
-        }
-
-        public override async Task<string> ExecuteCmd()
-        {
-            return await Task.Run(() => { return string.Empty; });
+        	iMessage.SendComments(WbId, CANNOT_EXECUTE, true);
         }
     }
 }

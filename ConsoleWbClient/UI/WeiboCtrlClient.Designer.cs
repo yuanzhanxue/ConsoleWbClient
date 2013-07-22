@@ -111,7 +111,7 @@
             this.notifyIcon.BalloonTipText = "单击此处显示界面!";
             this.notifyIcon.BalloonTipTitle = "提示";
             this.notifyIcon.ContextMenuStrip = this.contextMenuStrip1;
-            this.notifyIcon.Text = "Weibo后台服务";
+            this.notifyIcon.Text = "新浪微博后台服务";
             this.notifyIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon_MouseDoubleClick);
             // 
             // timer
