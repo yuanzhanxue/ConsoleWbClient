@@ -18,25 +18,25 @@ using ConsoleWbClient.CmdExcutor;
 
 namespace ConsoleWbClient.Domain
 {
-	/// <summary>
-	/// Description of MainLoop.
-	/// </summary>
-	public class MainLoop
-	{
-		private static readonly int LOOP_WAIT = 1000 * 20;
+    /// <summary>
+    /// Description of MainLoop.
+    /// </summary>
+    public class MainLoop
+    {
+        private static readonly int LOOP_WAIT = 1000 * 20;
         private static readonly int WAIT_FOR_SUBTREAD = 1000 * 60;
-		
-		private Client sina = Login.getSina();
+
+        private Client sina = Login.getSina();
 
         Dictionary<string, ManualResetEvent> eventHanles = new Dictionary<string, ManualResetEvent>();
-		
-		public MainLoop()
-		{
-			CmdEventMessage.GetInstance().MsgEvent += new CmdEventMessage.MsgEventHandler(CommitComment);
-		}
-		
-		private void CommitComment(string id, string comment, bool finished)
-		{
+
+        public MainLoop()
+        {
+            CmdEventMessage.GetInstance().MsgEvent += new CmdEventMessage.MsgEventHandler(CommitComment);
+        }
+
+        private void CommitComment(string id, string comment, bool finished)
+        {
             if (finished && eventHanles.ContainsKey(id))
             {
                 eventHanles.Remove(id);
@@ -44,21 +44,21 @@ namespace ConsoleWbClient.Domain
 
             if (sina != null)
             {
-			    sina.API.Entity.Comments.Create(id, comment);
-			}
-		}
-		
-		public void Excute()
-		{
-			while (SystemParamSet.IsEnableThread == 1)
+                sina.API.Entity.Comments.Create(id, comment);
+            }
+        }
+
+        public void Excute()
+        {
+            while (SystemParamSet.IsEnableThread == 1)
             {
                 Log.I("New loop start.");
-                if(sina == null)
+                if (sina == null)
                 {
-                	Log.E("微博帐号登录失败！");
-                	return;
+                    Log.E("微博帐号登录失败！");
+                    return;
                 }
-                
+
                 var uid = sina.API.Entity.Account.GetUID();
                 var msgs = sina.API.Entity.Account.UnreadCount(uid);
                 int mentionCount = 0;
@@ -99,6 +99,6 @@ namespace ConsoleWbClient.Domain
             }
 
             EventWaitHandle.WaitAll(eventHanles.Values.ToArray(), WAIT_FOR_SUBTREAD);
-		}
-	}
+        }
+    }
 }

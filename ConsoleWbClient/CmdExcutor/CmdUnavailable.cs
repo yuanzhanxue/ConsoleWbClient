@@ -27,7 +27,7 @@ namespace ConsoleWbClient.CmdExcutor
 
         public override void ExecuteMethod()
         {
-        	iMessage.SendComments(WbId, CANNOT_EXECUTE, true);
+            iMessage.SendComments(WbId, CANNOT_EXECUTE, true);
         }
     }
 }

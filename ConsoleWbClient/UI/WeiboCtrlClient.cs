@@ -12,7 +12,7 @@ namespace ConsoleWbClient.UI
         private delegate void DelegateWriteResult(string text, int s);
 
         private DateTime mStratTime { get; set; }
-        
+
         /// <summary>
         /// 线程上下文
         /// </summary>
@@ -30,11 +30,11 @@ namespace ConsoleWbClient.UI
             mStratTime = System.DateTime.Now;
             this.tbProcStart.Text = mStratTime.ToString("yyyy-MM-dd HH:mm:ss");
             Log.I("新浪微博后台服务启动！");
-            
+
             Init();
             StartBusThread();
         }
-        
+
         private void Init()
         {
             try
@@ -43,13 +43,13 @@ namespace ConsoleWbClient.UI
             }
             catch (Exception ex)
             {
-            	Log.E(ex.ToString());
+                Log.E(ex.ToString());
             }
         }
-        
+
         private void StartBusThread()
         {
-        	threadContext.Start();
+            threadContext.Start();
         }
 
         #region 窗体事件响应
@@ -130,7 +130,7 @@ namespace ConsoleWbClient.UI
         {
             if (MessageBox.Show("你确定要退出监控吗?", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
-            	threadContext.Abort();
+                threadContext.Abort();
                 Log.I("关闭监控程序! 总共运行时间：" + this.tbProcPerform.Text);
                 this.notifyIcon.Visible = false;
                 Environment.Exit(-1);

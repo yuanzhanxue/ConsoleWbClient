@@ -25,7 +25,7 @@ namespace ConsoleWbClient.CmdExcutor
 
         public override void ExecuteMethod()
         {
-        	iMessage.SendComments(WbId, POWER_OFF, false);
+            iMessage.SendComments(WbId, POWER_OFF, false);
             Cmd("shutdown -s");
         }
 

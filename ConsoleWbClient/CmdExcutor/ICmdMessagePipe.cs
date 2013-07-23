@@ -9,11 +9,11 @@ using System;
 
 namespace ConsoleWbClient.CmdExcutor
 {
-	/// <summary>
-	/// Description of ICmdMessagePipe.
-	/// </summary>
-	public interface ICmdMessagePipe
-	{
-		void SendComments(string id, string message, bool finished);
-	}
+    /// <summary>
+    /// Description of ICmdMessagePipe.
+    /// </summary>
+    public interface ICmdMessagePipe
+    {
+        void SendComments(string id, string message, bool finished);
+    }
 }

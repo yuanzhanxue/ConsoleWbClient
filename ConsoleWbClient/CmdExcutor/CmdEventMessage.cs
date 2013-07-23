@@ -9,17 +9,17 @@ using System;
 
 namespace ConsoleWbClient.CmdExcutor
 {
-	/// <summary>
-	/// Description of CmdEventMessage.
-	/// </summary>
-	public class CmdEventMessage: ICmdMessagePipe
-	{
-		public delegate void MsgEventHandler(string id, string msg, bool finished);
-		public event MsgEventHandler MsgEvent;
-		private static CmdEventMessage instance = null;
+    /// <summary>
+    /// Description of CmdEventMessage.
+    /// </summary>
+    public class CmdEventMessage : ICmdMessagePipe
+    {
+        public delegate void MsgEventHandler(string id, string msg, bool finished);
+        public event MsgEventHandler MsgEvent;
+        private static CmdEventMessage instance = null;
         private static object lockOjb = new object();
-        
-        private CmdEventMessage(){ }
+
+        private CmdEventMessage() { }
 
         /// <summary>
         /// 获取一个事件消息传递对象，本类单例模式
@@ -40,11 +40,11 @@ namespace ConsoleWbClient.CmdExcutor
 
             return instance;
         }
-		
-		public void SendComments(string id, string message, bool finished)
+
+        public void SendComments(string id, string message, bool finished)
         {
             if (MsgEvent != null)
                 MsgEvent(id, message, finished);
         }
-	}
+    }
 }

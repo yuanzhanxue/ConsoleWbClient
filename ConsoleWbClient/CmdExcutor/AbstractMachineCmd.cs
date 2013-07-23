@@ -15,7 +15,7 @@ namespace ConsoleWbClient.CmdExcutor
     /// Description of AbstractMachineCmd.
     /// </summary>
     public abstract class AbstractMachineCmd
-    {        
+    {
         /// <summary>
         /// 线程循环退出标志
         /// </summary>
@@ -25,26 +25,26 @@ namespace ConsoleWbClient.CmdExcutor
         /// 当前线程标识
         /// </summary>
         protected abstract string ThreadTag { get; }
-        
+
         /// <summary>
         /// 线程退出时向主线程发出信号
         /// </summary>
         private ManualResetEvent ExitSignal { get; set; }
-        
-    	/// <summary>
+
+        /// <summary>
         /// 消息传递接口
         /// </summary>
         protected ICmdMessagePipe iMessage = CmdEventMessage.GetInstance();
-        
+
         /// <summary>
         /// 微博指令内容
         /// </summary>
         protected string StrCmd { get; set; }
-        
+
         /// <summary>
         /// 微博ID
         /// </summary>
-        protected string WbId { get; set;}
+        protected string WbId { get; set; }
 
         public AbstractMachineCmd(string content, bool isContinue, ManualResetEvent exitSignal)
         {
@@ -52,24 +52,24 @@ namespace ConsoleWbClient.CmdExcutor
             IsContinue = isContinue;
             ExitSignal = exitSignal;
         }
-        
+
         /// <summary>
         /// 实现类
         /// </summary>
         public abstract void ExecuteMethod();
-        
+
         /// <summary>
         /// 执行代码
         /// </summary>
         public virtual void Execute(string wbId)
-        {  
-        	Thread thread = new Thread(new ThreadStart(DoWork));
+        {
+            Thread thread = new Thread(new ThreadStart(DoWork));
             thread.IsBackground = true;
             WbId = wbId;
             thread.Start();
             Log.I(string.Format("启用子线程{0}", ThreadTag));
         }
-        
+
         private void DoWork()
         {
             try

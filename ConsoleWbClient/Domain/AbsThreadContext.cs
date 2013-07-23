@@ -11,12 +11,12 @@ using ConsoleWbClient.Utilities;
 
 namespace ConsoleWbClient.Domain
 {
-	/// <summary>
+    /// <summary>
     /// 线程上下文
     /// </summary>
     public abstract class AbsThreadContext
     {
-        public  AbsThreadContext()
+        public AbsThreadContext()
         {
 
         }
@@ -37,7 +37,7 @@ namespace ConsoleWbClient.Domain
         /// <param name="str"></param>
         public void RaiseStartSuccessEvent(string str)
         {
-        	Log.I(str);
+            Log.I(str);
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace ConsoleWbClient.Domain
         /// <param name="str"></param>
         public void RaiseStartFailedEvent(string str)
         {
-        	Log.E(str);
+            Log.E(str);
         }
 
         /// <summary>
