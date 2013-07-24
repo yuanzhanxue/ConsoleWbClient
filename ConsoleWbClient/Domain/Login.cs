@@ -6,14 +6,14 @@ using NetDimension.Weibo;
 
 namespace ConsoleWbClient.Domain
 {
-    class Login
+    static class Login
     {
-        const string APP_KEY = "137994211";
-        const string APP_SECRET = "423dc5efdd8134c5d85abdc5be290455";
-        const string CALLBACK_ADDRESS = @"https://api.weibo.com/oauth2/default.html";
+        static readonly string APP_KEY = "137994211";
+        static readonly string APP_SECRET = "423dc5efdd8134c5d85abdc5be290455";
+        static readonly string CALLBACK_ADDRESS = @"https://api.weibo.com/oauth2/default.html";
 
         static string accessToken = null;
-        private static OAuth Oauth { get; set; }
+        static OAuth Oauth { get; set; }
 
         public static Client getSina()
         {

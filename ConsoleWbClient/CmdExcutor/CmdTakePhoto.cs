@@ -6,8 +6,12 @@
  * 
  */
 using System;
+using System.Drawing;
+using System.IO;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using ConsoleWbClient.Domain;
 
 namespace ConsoleWbClient.CmdExcutor
 {
@@ -21,6 +25,8 @@ namespace ConsoleWbClient.CmdExcutor
 
         protected override string ThreadTag { get { return "CmdTakePhoto"; } }
 
+        private string ImagePath { get; set; }
+
         public CmdTakePhoto(string content, bool isContinue, ManualResetEvent exitSignal)
             : base(content, isContinue, exitSignal)
         {
@@ -29,7 +35,39 @@ namespace ConsoleWbClient.CmdExcutor
         public override void ExecuteMethod()
         {
             iMessage.SendComments(WbId, TAKING_PHOTO, false);
-            iMessage.SendComments(WbId, TAKED_PHOTO, true);
+            // TODO: take photo, then post weibo.
+            // SendImageWeibo();
+        }
+
+        private void SendImageWeibo()
+        {
+            var sina = Login.getSina();
+            StringBuilder msg = new StringBuilder();
+
+            foreach (var name in SystemParamSet.ScreenNames)
+            {
+                msg.Append("@");
+                msg.Append(name);
+                msg.Append(" ");
+            }
+
+            msg.Append(TAKED_PHOTO);
+            sina.API.Entity.Statuses.Upload(msg.ToString(), GetImageBytes());
+        }
+
+        private byte[] GetImageBytes()
+        {
+            using(MemoryStream ms = new MemoryStream())
+            {
+                using(Image imageIn = Image.FromFile(ImagePath))
+                {
+                    using(Bitmap bmp = new Bitmap(imageIn))
+                    {
+                        bmp.Save(ms, imageIn.RawFormat);
+                    }
+                }
+                return ms.ToArray();
+            }
         }
     }
 }

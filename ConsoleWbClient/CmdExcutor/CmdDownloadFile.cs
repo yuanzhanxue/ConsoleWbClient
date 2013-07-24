@@ -11,6 +11,7 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using ConsoleWbClient.Domain;
 
 namespace ConsoleWbClient.CmdExcutor
 {
@@ -20,8 +21,9 @@ namespace ConsoleWbClient.CmdExcutor
     public class CmdDownloadFile : AbstractMachineCmd
     {
         public static readonly string DOWNLOAD_BEGIN = "开始下载，请稍候！";
-        public static readonly string DOWNLOADED_FILE = "文件下载已完成！";
-        public static readonly string DOWNLOAD_TYPE = "暂不支持HTTP外下载方式。";
+        public static readonly string DOWNLOADED_FILE_SUCCESS = "文件下载已完成！";
+        public static readonly string DOWNLOADED_FILE_FAILED = "主人，对不起，文件下载失败了！";
+        public static readonly string DOWNLOAD_TYPE = "仅支持HTTP,FTP下载方式。";
 
         protected override string ThreadTag { get { return "CmdDownloadFile"; } }
 
@@ -29,109 +31,222 @@ namespace ConsoleWbClient.CmdExcutor
 
         public override void ExecuteMethod()
         {
-            int pos = StrCmd.IndexOf("http");
-            if (pos >= 0 && StrCmd.Contains("://"))
+            string finalMsg = DOWNLOADED_FILE_SUCCESS;
+            AbsDownloader downloader = null;
+
+            if (HttpDownloader.IsLegalAddress(StrCmd))
+            {
+                downloader = new HttpDownloader(StrCmd);
+            }
+            else if (FtpDownloader.IsLegalAddress(StrCmd))
+            {
+                downloader = new FtpDownloader(StrCmd);
+            }
+            else
+            {
+                downloader = null;
+            }
+
+            if (downloader != null)
             {
                 iMessage.SendComments(WbId, DOWNLOAD_BEGIN, false);
-                DoDownload(StrCmd.Substring(pos));
+                finalMsg = downloader.DoDownload() ? DOWNLOADED_FILE_SUCCESS : DOWNLOADED_FILE_FAILED;
             }
             else
             {
                 iMessage.SendComments(WbId, DOWNLOAD_TYPE, true);
                 return;
             }
-            iMessage.SendComments(WbId, DOWNLOADED_FILE, true);
+
+            iMessage.SendComments(WbId, finalMsg, true);
         }
 
-        private bool DoDownload(string link)
+        internal abstract class AbsDownloader
         {
-            /* https://github.com/yuanzhanxue/ConsoleWbClient/archive/master.zip */
-            string origLink = GetFileNameByLink(link);
-            string strFileName = origLink.Split('/').Last();
+            protected DirectoryInfo FilePath { get; private set; }
 
-            bool flag = false;
-            //打开上次下载的文件
-            long pos = 0;
-            FileStream fStream;
-
-            if (File.Exists(strFileName))
+            public AbsDownloader(string strCmd)
             {
-                fStream = File.OpenWrite(strFileName);
-                pos = fStream.Length;
-                fStream.Seek(pos, SeekOrigin.Current);
-            }
-            else
-            {
-                fStream = new FileStream(strFileName, FileMode.Create);
-                pos = 0;
-            }
-
-            try
-            {
-                HttpWebRequest myRequest = (HttpWebRequest)HttpWebRequest.Create(origLink);
-
-                if (pos > 0) myRequest.AddRange((int)pos);  //设置Range值
-
-                //向服务器请求,获得服务器的回应数据流
-                Stream myStream = myRequest.GetResponse().GetResponseStream();
-
-                byte[] btContent = new byte[512];
-                int intSize = 0;
-                intSize = myStream.Read(btContent, 0, 512);
-
-                while (intSize > 0)
+                if (File.Exists(SystemParamSet.DownloadPath))
                 {
-                    fStream.Write(btContent, 0, intSize);
-                    intSize = myStream.Read(btContent, 0, 512);
+                    FilePath = new DirectoryInfo(SystemParamSet.DownloadPath);
+                }
+                else
+                {
+                    FilePath = Directory.CreateDirectory(SystemParamSet.DownloadPath);
+                }
+            }
+
+            protected string UriLink { get; set; }
+
+            public abstract bool DoDownload();
+        }
+
+        /// <summary>
+        /// Download file by HTTP
+        /// </summary>
+        internal class HttpDownloader : AbsDownloader
+        {
+            private static readonly string PREFIX = "http://";
+
+            public HttpDownloader(string strCmd)
+                : base(strCmd)
+            {
+                UriLink = GetOrignalLink(strCmd.Substring(strCmd.IndexOf(PREFIX)));
+            }
+
+            public static bool IsLegalAddress(string strCmd)
+            {
+                return strCmd.Contains(PREFIX);
+            }
+
+            public override bool DoDownload()
+            {
+                string targetFile = UriLink.Split('/').Last();
+                targetFile = Path.Combine(FilePath.FullName, targetFile);
+                bool flag = false;
+                // 打开上次下载的文件
+                long pos = 0;
+                FileStream fStream;
+
+                if (File.Exists(targetFile))
+                {
+                    fStream = File.OpenWrite(targetFile);
+                    pos = fStream.Length;
+                    fStream.Seek(pos, SeekOrigin.Current);
+                }
+                else
+                {
+                    fStream = new FileStream(targetFile, FileMode.Create);
+                    pos = 0;
                 }
 
-                fStream.Close();
-                myStream.Close();
-                flag = true;
-            }
-            catch (Exception)
-            {
-                fStream.Close();
-                flag = false;       //返回false下载失败
-            }
-
-            return flag;
-        }
-
-        private string GetFileNameByLink(string link)
-        {
-            using (WebClient client = new MyWebClient())
-            {
-                client.Headers.Add("Referer", link);
-                Stream stream = null;
                 try
                 {
-                    stream = client.OpenRead(link);
-                    return client.ResponseHeaders["Location"];
+                    HttpWebRequest myRequest = (HttpWebRequest)HttpWebRequest.Create(UriLink);
+
+                    if (pos > 0) myRequest.AddRange((int)pos);  //设置Range值
+
+                    //向服务器请求,获得服务器的回应数据流
+                    Stream myStream = myRequest.GetResponse().GetResponseStream();
+
+                    byte[] btContent = new byte[512];
+                    int intSize = 0;
+                    intSize = myStream.Read(btContent, 0, 512);
+
+                    while (intSize > 0)
+                    {
+                        fStream.Write(btContent, 0, intSize);
+                        intSize = myStream.Read(btContent, 0, 512);
+                    }
+
+                    fStream.Close();
+                    myStream.Close();
+                    flag = true;
                 }
                 catch (Exception)
                 {
-                    throw;
+                    fStream.Close();
+                    flag = false;       //返回false下载失败
                 }
-                finally
+
+                return flag;
+            }
+
+            private string GetOrignalLink(string link)
+            {
+                /* https://github.com/yuanzhanxue/ConsoleWbClient/archive/master.zip */
+                using (WebClient client = new MyWebClient())
                 {
-                    if (stream != null) stream.Close();
+                    client.Headers.Add("Referer", link);
+                    Stream stream = null;
+                    try
+                    {
+                        stream = client.OpenRead(link);
+                        return client.ResponseHeaders["Location"];
+                    }
+                    catch (Exception)
+                    {
+                        throw;
+                    }
+                    finally
+                    {
+                        if (stream != null) stream.Close();
+                    }
+                }
+            }
+
+            internal class MyWebClient : WebClient
+            {
+                protected override WebRequest GetWebRequest(Uri address)
+                {
+                    HttpWebRequest request = (HttpWebRequest)base.GetWebRequest(address);
+                    request.AllowAutoRedirect = false;
+                    return request;
                 }
             }
         }
 
-        internal class MyWebClient : WebClient
+        /// <summary>
+        /// Download file by FTP
+        /// </summary>
+        internal class FtpDownloader : AbsDownloader
         {
-            /// <summary>
-            /// 重写获取WebRequest的方法
-            /// </summary>
-            /// <param name="address"></param>
-            /// <returns></returns>
-            protected override WebRequest GetWebRequest(Uri address)
+            private static readonly string PREFIX = "ftp://";
+
+            public FtpDownloader(string strCmd)
+                : base(strCmd)
             {
-                HttpWebRequest request = (HttpWebRequest)base.GetWebRequest(address);
-                request.AllowAutoRedirect = false;
-                return request;
+                UriLink = PREFIX + strCmd.Substring(strCmd.IndexOf("://") + 3);
+            }
+
+            public static bool IsLegalAddress(string strCmd)
+            {
+                return strCmd.ToLower().Contains(PREFIX);
+            }
+
+            public override bool DoDownload()
+            {
+                string targetFile = UriLink.Split('/').Last();
+                targetFile = Path.Combine(FilePath.FullName, targetFile);
+
+                if (File.Exists(targetFile))
+                {
+                    File.Delete(targetFile);
+                }
+
+                FileStream fStream = new FileStream(targetFile, FileMode.Create);
+
+                try
+                {
+                    FtpWebRequest reqFTP = (FtpWebRequest)FtpWebRequest.Create(new Uri(UriLink));
+                    reqFTP.Method = WebRequestMethods.Ftp.DownloadFile;
+                    reqFTP.UseBinary = true;
+                    reqFTP.KeepAlive = false;
+
+                    FtpWebResponse response = (FtpWebResponse)reqFTP.GetResponse();
+                    Stream ftpStream = response.GetResponseStream();
+                    long cl = response.ContentLength;
+                    int bufferSize = 2048;
+                    int readCount;
+                    byte[] buffer = new byte[bufferSize];
+
+                    readCount = ftpStream.Read(buffer, 0, bufferSize);
+                    while (readCount > 0)
+                    {
+                        fStream.Write(buffer, 0, readCount);
+                        readCount = ftpStream.Read(buffer, 0, bufferSize);
+                    }
+
+                    ftpStream.Close();
+                    fStream.Close();
+                    response.Close();
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+                return true;
             }
         }
     }

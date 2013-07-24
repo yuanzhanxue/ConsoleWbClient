@@ -16,7 +16,7 @@ namespace ConsoleWbClient.Utilities
 
         public static readonly string TimeFormat = "yyyy-MM-dd HH:mm:ss,fff";
 
-        private static readonly ILog log 
+        private static readonly ILog log
             = LogManager.GetLogger((new System.Diagnostics.StackTrace()).GetFrame(2).GetMethod().DeclaringType);
 
         public static void E(string msg)

@@ -22,6 +22,7 @@ namespace ConsoleWbClient.Domain
         private static readonly string KEY_PASSWORD = "Password";
         private static readonly string KEY_SCREEN_NAME = "ScreenName";
         private static readonly string KEY_SINCE_ID = "SinceId";
+        private static readonly string KEY_DOWNLOADS = "FilePath";
         /// <summary>
         /// 构造加载
         /// </summary>
@@ -32,6 +33,7 @@ namespace ConsoleWbClient.Domain
             password = ConfigurationManager.AppSettings[KEY_PASSWORD];
             screenNames = ConfigurationManager.AppSettings[KEY_SCREEN_NAME];
             sinceId = ConfigurationManager.AppSettings[KEY_SINCE_ID];
+            dowloads = ConfigurationManager.AppSettings[KEY_DOWNLOADS];
         }
 
         /// <summary>
@@ -69,7 +71,7 @@ namespace ConsoleWbClient.Domain
             set
             {
                 SystemParamSet.accountName = value;
-                SetField(KEY_ACCOUNT_NAME, value.ToString());
+                SetField(KEY_ACCOUNT_NAME, value);
             }
         }
 
@@ -80,7 +82,7 @@ namespace ConsoleWbClient.Domain
             set
             {
                 SystemParamSet.password = value;
-                SetField(KEY_PASSWORD, value.ToString());
+                SetField(KEY_PASSWORD, value);
             }
         }
 
@@ -108,7 +110,18 @@ namespace ConsoleWbClient.Domain
             set
             {
                 SystemParamSet.sinceId = value;
-                SetField(KEY_SINCE_ID, value.ToString());
+                SetField(KEY_SINCE_ID, value);
+            }
+        }
+
+        private static volatile string dowloads = string.Empty;
+        public static string DownloadPath
+        {
+            get { return SystemParamSet.dowloads; }
+            set
+            {
+                SystemParamSet.dowloads = value;
+                SetField(KEY_DOWNLOADS, value);
             }
         }
     }
