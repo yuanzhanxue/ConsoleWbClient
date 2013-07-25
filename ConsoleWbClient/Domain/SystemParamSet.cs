@@ -23,6 +23,7 @@ namespace ConsoleWbClient.Domain
         private static readonly string KEY_SCREEN_NAME = "ScreenName";
         private static readonly string KEY_SINCE_ID = "SinceId";
         private static readonly string KEY_DOWNLOADS = "FilePath";
+        private static readonly string KEY_PHOTOS = "PhotoPath";
         /// <summary>
         /// 构造加载
         /// </summary>
@@ -34,6 +35,7 @@ namespace ConsoleWbClient.Domain
             screenNames = ConfigurationManager.AppSettings[KEY_SCREEN_NAME];
             sinceId = ConfigurationManager.AppSettings[KEY_SINCE_ID];
             dowloads = ConfigurationManager.AppSettings[KEY_DOWNLOADS];
+            photos = ConfigurationManager.AppSettings[KEY_PHOTOS];
         }
 
         /// <summary>
@@ -122,6 +124,17 @@ namespace ConsoleWbClient.Domain
             {
                 SystemParamSet.dowloads = value;
                 SetField(KEY_DOWNLOADS, value);
+            }
+        }
+        
+        private static volatile string photos = string.Empty;
+        public static string PhotoPath
+        {
+            get { return SystemParamSet.photos; }
+            set
+            {
+                SystemParamSet.photos = value;
+                SetField(KEY_PHOTOS, value);
             }
         }
     }

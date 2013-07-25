@@ -8,7 +8,6 @@
 using System;
 using System.Diagnostics;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace ConsoleWbClient.CmdExcutor
 {
@@ -17,7 +16,7 @@ namespace ConsoleWbClient.CmdExcutor
     /// </summary>
     public class CmdShutdown : AbstractMachineCmd
     {
-        public static readonly string POWER_OFF = "正在强行关机，请稍候！";
+        private static readonly string POWER_OFF = "正在强行关机，请稍候！";
 
         protected override string ThreadTag { get { return "CmdShutdown"; } }
 

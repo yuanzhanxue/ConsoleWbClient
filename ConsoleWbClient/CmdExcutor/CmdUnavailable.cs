@@ -7,7 +7,6 @@
  */
 using System;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace ConsoleWbClient.CmdExcutor
 {
@@ -16,7 +15,7 @@ namespace ConsoleWbClient.CmdExcutor
     /// </summary>
     public class CmdUnavailable : AbstractMachineCmd
     {
-        public static readonly string CANNOT_EXECUTE = "奴婢做不到啊！";
+        private static readonly string CANNOT_EXECUTE = "奴婢做不到啊！";
 
         protected override string ThreadTag { get { return "CmdUnavailable"; } }
 

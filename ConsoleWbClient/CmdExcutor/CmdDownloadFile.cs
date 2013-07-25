@@ -10,7 +10,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading;
-using System.Threading.Tasks;
 using ConsoleWbClient.Domain;
 
 namespace ConsoleWbClient.CmdExcutor
@@ -20,10 +19,10 @@ namespace ConsoleWbClient.CmdExcutor
     /// </summary>
     public class CmdDownloadFile : AbstractMachineCmd
     {
-        public static readonly string DOWNLOAD_BEGIN = "开始下载，请稍候！";
-        public static readonly string DOWNLOADED_FILE_SUCCESS = "文件下载已完成！";
-        public static readonly string DOWNLOADED_FILE_FAILED = "主人，对不起，文件下载失败了！";
-        public static readonly string DOWNLOAD_TYPE = "仅支持HTTP,FTP下载方式。";
+        private static readonly string DOWNLOAD_BEGIN = "开始下载，请稍候！";
+        private static readonly string DOWNLOADED_FILE_SUCCESS = "文件下载已完成！";
+        private static readonly string DOWNLOADED_FILE_FAILED = "主人，对不起，文件下载失败了！";
+        private static readonly string DOWNLOAD_TYPE = "仅支持HTTP,FTP下载方式。";
 
         protected override string ThreadTag { get { return "CmdDownloadFile"; } }
 

@@ -58,6 +58,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CmdExcutor\AbstractMachineCmd.cs" />
+    <Compile Include="CmdExcutor\CapturePhotoForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CmdExcutor\CapturePhotoForm.Designer.cs">
+      <DependentUpon>CapturePhotoForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="CmdExcutor\CmdDownloadFile.cs" />
     <Compile Include="CmdExcutor\CmdEventMessage.cs" />
     <Compile Include="CmdExcutor\CmdFactory.cs" />
@@ -88,6 +94,9 @@
     <None Include="log4net.config" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="CmdExcutor\CapturePhotoForm.resx">
+      <DependentUpon>CapturePhotoForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\WeiboCtrlClient.resx">
       <DependentUpon>WeiboCtrlClient.cs</DependentUpon>
     </EmbeddedResource>
