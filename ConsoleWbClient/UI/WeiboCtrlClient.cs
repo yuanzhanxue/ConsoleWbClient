@@ -169,12 +169,11 @@ namespace ConsoleWbClient.UI
         }
         #endregion
 
-        private delegate void ListBoxLogHandler(string log);
         public void OnLogWriting(string txt)
         {
             if (listBoxLog.InvokeRequired)
             {
-                this.Invoke(new ListBoxLogHandler(OnLogWriting), new object[] { txt });
+                this.Invoke(new Action<string>(OnLogWriting), new object[] { txt });
             }
             else
             {

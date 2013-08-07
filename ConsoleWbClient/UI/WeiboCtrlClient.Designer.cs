@@ -108,9 +108,10 @@
             // notifyIcon
             // 
             this.notifyIcon.BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Info;
-            this.notifyIcon.BalloonTipText = "单击此处显示界面!";
+            this.notifyIcon.BalloonTipText = "双击此处显示界面!";
             this.notifyIcon.BalloonTipTitle = "提示";
             this.notifyIcon.ContextMenuStrip = this.contextMenuStrip1;
+            this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon.Icon")));
             this.notifyIcon.Text = "新浪微博后台服务";
             this.notifyIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon_MouseDoubleClick);
             // 
@@ -225,7 +226,7 @@
             // 
             this.toolStripStatusLabel.Name = "toolStripStatusLabel";
             this.toolStripStatusLabel.Size = new System.Drawing.Size(243, 17);
-            this.toolStripStatusLabel.Text = "运行状态:网络正常/数据库连接正常";
+            this.toolStripStatusLabel.Text = "运行状态:网络正常";
             // 
             // stripBtnQuit
             // 
